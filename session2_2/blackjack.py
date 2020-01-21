@@ -72,11 +72,13 @@ class CardDeck(object):
         else:
             raise Exception('Unknown deck status')
 
+        '''
         # create random number generator here
         ## ok this is so unsafe. should probs create two subclasses of deck
         ## main deck vs hand
         if rand_method:
             self.rand_generator = self._getRandGenerator(rand_method)
+        '''
 
     def __repr__(self):
         # For output
@@ -99,17 +101,6 @@ class CardDeck(object):
 
     # Modify the code here for abstraction.
     # ------------------------------------------------------
-    def pop_rand(self): # require something that implements Random()
-        ''' This element returns a random card from a given list of cards.
-
-        Input:
-          deck: list of available cards to return.
-          x1: variable for use in the generation of random numbers.
-          x2: variable for use in the generation of random numbers.
-        '''
-         rand_num = self.rand_generator.random_number() # generate number
-
-        return self.cards.pop(rand_num % len(self.cards))
     # ------------------------------------------------------
 
     def blackjack_value(self):
@@ -133,6 +124,29 @@ class CardDeck(object):
         else:
             return final_value
 
+class DrawableCardDeck(CardDeck):
+    '''
+    A deck that allows you to draw randomly from it
+
+    # I think CardDeck is small and narrowly defined enough class that subclassing is fine
+    # could decorate instead but laZ
+    '''
+    def __init__(self, rand_method, status = 'empty'):
+        super().__init__(status)
+        self.rand_generator = self.rand_generator = self._getRandGenerator(rand_method)
+
+    def pop_rand(self): # require something that implements Random()
+        ''' This element returns a random card from a given list of cards.
+
+        Input:
+          deck: list of available cards to return.
+          x1: variable for use in the generation of random numbers.
+          x2: variable for use in the generation of random numbers.
+        '''
+        rand_num = self.rand_generator.random_number() # generate number
+
+        return self.cards.pop(rand_num % len(self.cards))
+
     def _getRandGenerator(self,rand_method):
         '''
         Handler for random method types
@@ -145,6 +159,7 @@ class CardDeck(object):
             return(mersenne_generator)
         else:
             raise Exception('Unknown random method')
+
 
 class Random:
     '''
@@ -245,7 +260,7 @@ def game(args):
 
     # Initialize everything
 
-    deck = CardDeck(status = 'full', rand_method=args.rand_method)
+    deck = DrawableCardDeck(status = 'full', rand_method=args.rand_method)
 
     my_hand = CardDeck(status = 'empty')
     dealer_hand = CardDeck(status = 'empty')
