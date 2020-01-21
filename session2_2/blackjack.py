@@ -9,7 +9,6 @@
 import itertools
 import gettext
 from datetime import datetime # for random
-from abc import ABC, abstractmethod
 
 class Card(object):
 
@@ -94,7 +93,7 @@ class CardDeck(object):
 
     # Modify the code here for abstraction.
     # ------------------------------------------------------
-    def pop_rand(self, random: Random): # require something that implements Random()
+    def pop_rand(self, rand_method): # require something that implements Random()
         ''' This element returns a random card from a given list of cards.
 
         Input:
@@ -103,7 +102,9 @@ class CardDeck(object):
           x2: variable for use in the generation of random numbers.
         '''
 
-        rand_num = random.random_number()
+        rand_generator = self._getRandGenerator(rand_method) # get generator based on arg
+        ## tbh, would be way better to set the method on initialization
+        rand_num = rand_generator.random_number() # generate number
 
         return self.cards.pop(rand_num % len(self.cards))
     # ------------------------------------------------------
@@ -129,13 +130,30 @@ class CardDeck(object):
         else:
             return final_value
 
-# abstract class for randomization
-class Random(ABC):
-    @abstractmethod
-    def random_number():
+    def _getRandGenerator(self,rand_method):
+        '''
+        Handler for random method types
+        '''
+        if rand_method == "randU":
+            randu_generator = RandU()
+            return(randu_generator)
+        elif rand_method == "Mersenne":
+            mersenne_generator = Mersenne()
+            return(mersenne_generator)
+        else:
+            raise Exception('Unknown random method')
+
+class Random:
+    '''
+    interface for random number
+    '''
+    def random_number(self):
         pass
 
-class Randu(Random):
+class RandU(Random):
+    '''
+    Implementation of randU generator
+    '''
     def __init__(self):
         self.x = int((datetime.utcnow() - datetime.min).total_seconds())
         # Constants given by the RANDU algorithm:
@@ -143,60 +161,64 @@ class Randu(Random):
         self.c = 65539
         self.m = 2147483648
 
-    def random_number():
-        self.x = abs((c * x) % m) # update x
-        return(x)
+    def random_number(self):
+        self.x = abs((self.c * self.x) % self.m) # update x
+        return(self.x)
 
 class Mersenne(Random):
+    '''
+    Implementation of Mersenne generator
+    '''
     def __init__(self):
-        # init seeds
-        self.seed = int((datetime.utcnow() - datetime.min).total_seconds())
-        (self.MT, self.index) = self._initialize_generator(seed)
-
         # bitmasks
         self.bitmask_1 = (2**32) - 1  # To get last 32 bits
         self.bitmask_2 = 2**31  # To get 32nd bit
         self.bitmask_3 = (2**31) - 1  # To get last 31 bits
 
-    def random_number():
-        (MT, index, y) = self._extract_number(MT, index)
+        # init seeds
+        self.seed = int((datetime.utcnow() - datetime.min).total_seconds())
+        (self.MT, self.index) = self._initialize_generator()
+
+    def random_number(self):
+        (self.MT, self.index, y) = self._extract_number()
         return(y)
 
-    def _initialize_generator(seed):
+    def _initialize_generator(self):
         "Initialize the generator from a seed"
         # Create a length 624 list to store the state of the generator
-        MT = [0 for i in range(624)]
-        index = 0
-        MT[0] = seed
+        self.MT = [0 for i in range(624)]
+        self.index = 0
+        self.MT[0] = self.seed
         for i in range(1, 624):
-            MT[i] = ((1812433253 * MT[i - 1]) ^ (
-                (MT[i - 1] >> 30) + i)) & self.bitmask_1
-        return (MT, index)
+            self.MT[i] = ((1812433253 * self.MT[i - 1]) ^ (
+                (self.MT[i - 1] >> 30) + i)) & self.bitmask_1
+        return (self.MT, self.index)
 
-    def _generate_numbers(MT):
+    def _generate_numbers(self):
         "Generate an array of 624 untempered numbers"
         for i in range(624):
-            y = (MT[i] & self.bitmask_2) + (MT[(i + 1) % 624] & self.bitmask_3)
-            MT[i] = MT[(i + 397) % 624] ^ (y >> 1)
+            y = (self.MT[i] & self.bitmask_2) + (self.MT[(i + 1) % 624] & self.bitmask_3)
+            self.MT[i] = self.MT[(i + 397) % 624] ^ (y >> 1)
             if y % 2 != 0:
-                MT[i] ^= 2567483615
-        return MT
+                self.MT[i] ^= 2567483615
+        return self.MT
 
-    def _extract_number(MT, index):
+    def _extract_number(self):
         """
         Extract a tempered pseudorandom number based on the index-th value,
         calling generate_numbers() every 624 numbers
         """
-        if index == 0:
-            MT = self._generate_numbers(MT)
-        y = MT[index]
+        if self.index == 0:
+            self.MT = self._generate_numbers()
+        y = self.MT[self.index]
         y ^= y >> 11
         y ^= (y << 7) & 2636928640
         y ^= (y << 15) & 4022730752
         y ^= y >> 18
 
-        index = (index + 1) % 624
-        return (MT, index, y)
+        self.index = (self.index + 1) % 624
+        return (self.MT, self.index, y)
+
 
 
 def display(player, dealer, args):
