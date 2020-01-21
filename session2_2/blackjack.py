@@ -64,13 +64,19 @@ class Card(object):
 
 class CardDeck(object):
 
-    def __init__(self, status = 'empty'):
+    def __init__(self, status = 'empty', rand_method = None):
         if status == 'empty':
             self.cards = []
         elif status == 'full':
             self.cards = [Card(suit, rank) for suit, rank in itertools.product(Card.PRETTY_SUITS, range(1, 13))]
         else:
             raise Exception('Unknown deck status')
+
+        # create random number generator here
+        ## ok this is so unsafe. should probs create two subclasses of deck
+        ## main deck vs hand
+        if rand_method:
+            self.rand_generator = self._getRandGenerator(rand_method)
 
     def __repr__(self):
         # For output
@@ -93,7 +99,7 @@ class CardDeck(object):
 
     # Modify the code here for abstraction.
     # ------------------------------------------------------
-    def pop_rand(self, rand_method): # require something that implements Random()
+    def pop_rand(self): # require something that implements Random()
         ''' This element returns a random card from a given list of cards.
 
         Input:
@@ -101,10 +107,7 @@ class CardDeck(object):
           x1: variable for use in the generation of random numbers.
           x2: variable for use in the generation of random numbers.
         '''
-
-        rand_generator = self._getRandGenerator(rand_method) # get generator based on arg
-        ## tbh, would be way better to set the method on initialization
-        rand_num = rand_generator.random_number() # generate number
+         rand_num = self.rand_generator.random_number() # generate number
 
         return self.cards.pop(rand_num % len(self.cards))
     # ------------------------------------------------------
@@ -242,22 +245,22 @@ def game(args):
 
     # Initialize everything
 
-    deck = CardDeck(status = 'full')
+    deck = CardDeck(status = 'full', rand_method=args.rand_method)
 
     my_hand = CardDeck(status = 'empty')
     dealer_hand = CardDeck(status = 'empty')
 
     # Deal the initial cards
     for a in range(2):
-        card = deck.pop_rand(rand_method = args.rand_method)
+        card = deck.pop_rand()
         my_hand.append(card)
-        card = deck.pop_rand(rand_method = args.rand_method)
+        card = deck.pop_rand()
         dealer_hand.append(card)
 
     # Give the user as many cards as they want (without going bust).
     display(my_hand, dealer_hand, args)
     while hit_me(args):
-        card = deck.pop_rand(rand_method = args.rand_method)
+        card = deck.pop_rand()
         my_hand.append(card)
         display(my_hand, dealer_hand, args)
         if my_hand.blackjack_value() < 0:
@@ -267,7 +270,7 @@ def game(args):
     # Now deal cards to the dealer:
     print(_("The dealer has: "), repr(dealer_hand))
     while 0 < dealer_hand.blackjack_value() < 17:
-        card = deck.pop_rand(rand_method = args.rand_method)
+        card = deck.pop_rand()
         dealer_hand.append(card)
         print(_('The dealer hits'))
         print(_('The dealer has: '), repr(dealer_hand))
