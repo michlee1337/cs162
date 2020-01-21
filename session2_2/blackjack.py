@@ -8,6 +8,7 @@
 
 import itertools
 import gettext
+from datetime import datetime # for random
 
 class Card(object):
 
@@ -35,7 +36,7 @@ class Card(object):
         return self.PRETTY_SUITS[self.suit] + ' ' + self.STR_RANKS[self.rank - 1]
 
     def value_blackjack(self):
-        '''Return the value of a card when in the game of Blackjack.    
+        '''Return the value of a card when in the game of Blackjack.
 
         Input:
             card: A string which identifies the playing card.
@@ -51,10 +52,10 @@ class Card(object):
         return (self.rank < 10) * self.rank + (self.rank >= 10) * 10
 
     def is_ace(self):
-        '''Identify whether or not a card is an ace.    
+        '''Identify whether or not a card is an ace.
 
         Input:
-            card: A string which identifies the playing card.   
+            card: A string which identifies the playing card.
 
         Returns:
             true or false, depending on whether the card is an ace or not.
@@ -92,25 +93,25 @@ class CardDeck(object):
 
     # Modify the code here for abstraction.
     # ------------------------------------------------------
-    def pop_rand(self, rand_method, x, c, m):
-        ''' This element returns a random card from a given list of cards.  
+    def pop_rand(self, rand_method):
+        ''' This element returns a random card from a given list of cards.
 
         Input:
           deck: list of available cards to return.
           x1: variable for use in the generation of random numbers.
           x2: variable for use in the generation of random numbers.
-        ''' 
+        '''
 
-        rand_num = random_number(x, c, m)
+        rand_num = random_number()
 
         return self.cards.pop(rand_num % len(self.cards))
     # ------------------------------------------------------
 
     def blackjack_value(self):
-        '''Calculate the maximal value of a given hand in Blackjack.    
+        '''Calculate the maximal value of a given hand in Blackjack.
 
         Input:
-            cards: A list of strings, with each string identifying a playing card.  
+            cards: A list of strings, with each string identifying a playing card.
 
         Returns:
             The highest possible value of this hand if it is a legal blackjack
@@ -129,7 +130,14 @@ class CardDeck(object):
 
 # Modify the code here for abstraction.
 # ------------------------------------------------------
-def random_number(x, c, m):
+def random_number():
+    # i should modify this to take a method arg
+    # randU initiation
+    x = int((datetime.utcnow() - datetime.min).total_seconds())
+    # Constants given by the RANDU algorithm:
+    # https://en.wikipedia.org/wiki/RANDU
+    c = 65539
+    m = 2147483648
     ''' Produce a random number using the Park-Miller method.
     See http://www.firstpr.com.au/dsp/rand31/ for further details of this
     method. It is recommended to use the returned value as the value for x1,
@@ -141,7 +149,7 @@ def random_number(x, c, m):
 def display(player, dealer, args):
     '''Display the current information available to the player.'''
     print(_('The dealer is showing: '), dealer[0])
-    print(_('Your hand is: '), player) 
+    print(_('Your hand is: '), player)
 
 def hit_me(args):
     '''Query the user as to whether they want another car or not.
@@ -157,19 +165,6 @@ def hit_me(args):
 
 def game(args):
 
-
-    # Modify the code here for abstraction.
-    # ------------------------------------------------------
-    from datetime import datetime
-    # randU initiation
-    x = int((datetime.utcnow() - datetime.min).total_seconds())
-    # Constants given by the RANDU algorithm:
-    # https://en.wikipedia.org/wiki/RANDU
-    c = 65539
-    m = 2147483648
-    # ------------------------------------------------------
-
-
     # Initialize everything
 
     deck = CardDeck(status = 'full')
@@ -179,15 +174,15 @@ def game(args):
 
     # Deal the initial cards
     for a in range(2):
-        card = deck.pop_rand(rand_method = args.rand_method, x = x, c = c, m = m)
+        card = deck.pop_rand(rand_method = args.rand_method)
         my_hand.append(card)
-        card = deck.pop_rand(rand_method = args.rand_method, x = x, c = c, m = m)
+        card = deck.pop_rand(rand_method = args.rand_method)
         dealer_hand.append(card)
 
     # Give the user as many cards as they want (without going bust).
     display(my_hand, dealer_hand, args)
     while hit_me(args):
-        card = deck.pop_rand(rand_method = args.rand_method, x = x, c = c, m = m)
+        card = deck.pop_rand(rand_method = args.rand_method)
         my_hand.append(card)
         display(my_hand, dealer_hand, args)
         if my_hand.blackjack_value() < 0:
@@ -197,7 +192,7 @@ def game(args):
     # Now deal cards to the dealer:
     print(_("The dealer has: "), repr(dealer_hand))
     while 0 < dealer_hand.blackjack_value() < 17:
-        card = deck.pop_rand(rand_method = args.rand_method, x = x, c = c, m = m)
+        card = deck.pop_rand(rand_method = args.rand_method)
         dealer_hand.append(card)
         print(_('The dealer hits'))
         print(_('The dealer has: '), repr(dealer_hand))
@@ -220,11 +215,11 @@ def game(args):
 
 if __name__ == '__main__':
 
-    import argparse 
+    import argparse
 
     parser = argparse.ArgumentParser(description="BlackJack Game")
-    # Note that the rand_method argument is nor enabled in code!
-    parser.add_argument('--rand_method', default='randU', 
+    # Note that the rand_method argument is not enabled in code!
+    parser.add_argument('--rand_method', default='randU',
                         help='The random number generator method. Choose between \'Mersenne\' and \'randU\'.')
     args = parser.parse_args()
 
@@ -233,7 +228,7 @@ if __name__ == '__main__':
     _ = gettext.gettext
 
     print()
-    print('BlackJack') 
+    print('BlackJack')
     print('-' * 30)
     print(vars(args))
     print('-' * 30)
@@ -242,3 +237,17 @@ if __name__ == '__main__':
     game(args)
 
     print()
+
+'''
+Question answers:
+
+no coding, file directory + function call knowledge
+abstraction cause no need to know how it works/ mess with any existing code.
+
+objects are better abstraction. card and deck can be modified seperately. (modifying rank actually still touches both, but suits can be modified with just card). But card decks are pretty standard so its probably fine. card valuation rules can be modified in card and card dealing rules can be modified in deck.
+
+everytime we call pop random.
+we just care about getting the random number
+
+
+'''
