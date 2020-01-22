@@ -133,7 +133,7 @@ class DrawableCardDeck(CardDeck):
     '''
     def __init__(self, rand_method, status = 'empty'):
         super().__init__(status)
-        self.rand_generator = self.rand_generator = self._getRandGenerator(rand_method)
+        self.rand_generator = self._getRandGenerator(rand_method)
 
     def pop_rand(self): # require something that implements Random()
         ''' This element returns a random card from a given list of cards.
@@ -152,14 +152,16 @@ class DrawableCardDeck(CardDeck):
         Handler for random method types
         '''
         if rand_method == "randU":
-            randu_generator = RandU()
-            return(randu_generator)
+            generator = RandU()
         elif rand_method == "Mersenne":
-            mersenne_generator = Mersenne()
-            return(mersenne_generator)
+            generator = Mersenne()
         else:
             raise Exception('Unknown random method')
 
+        if isinstance(generator,Random):
+            return(generator)
+        else:
+            raise Exception("Does not implement Random interface")
 
 class Random:
     '''
