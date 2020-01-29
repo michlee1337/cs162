@@ -202,6 +202,6 @@ def liskov_substitution_principle(x):
 
  [Helpful reading](https://docs.python.org/3.5/library/operator.html)
 
-### 5. (Optional) Multiple inheritance bug
+### 4. (Optional) Multiple inheritance bug
 There is a subtle bug in the initialization of a tomato.  Identify the bug,
 and then fix the bug!
