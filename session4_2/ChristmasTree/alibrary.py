@@ -3,7 +3,7 @@ try:
     from log import FileLog
     logFile = FileLog()
 except Exception as e:
-    print('WARNING: Missing Filelog() in log.py')
+    print('a WARNING: Missing Filelog() in log.py')
 
 def giftGenerate(count = 1):
     """ Gift Generation.
