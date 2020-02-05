@@ -54,9 +54,7 @@ results.
 
 ## Questions
 
-### 1. Singleton Implementation
-
-Christmas Tree FileLog
+### 1. Singleton Implementation: Logging
 
 A Christmas Tree program is contained in the ChristmasTree folder.
 
@@ -65,9 +63,21 @@ A Christmas Tree program is contained in the ChristmasTree folder.
  - Add your own FileLog class in `log.py` so that wherever you create a new 
    Logger, that it ends up using the same set of handlers, even though in
    this case there is only a single handler class.
-    - Just use an INFO level and a WARNING level.
+    - Just use an INFO level, a WARNING level, and an ERROR level.
     - No need for logging filters.
     - No need for logging formatters.
+ - **YOUR SOLUTION MUST NOT USE `import logging`! The point is to implement our own**
+   **logging library**
+ - You must be able to change the appropriate level of logging **globally** by 
+   adding a single line of logging configuration in main.py. 
+
+Please note that the Christmas tree application is a very hypothetical set of 
+libraries. It generates a random set of presents and distributes them to a 
+set of children. However the library requires that the process follows a particular 
+order. The usage of the library in `main.py` first does things correctly, and then
+does things incorrectly. This is fine. We are using this example purely as a means
+of testing your logging library, so we actually want to generate a few warnings and
+errors!
 
 Bring your code to class and be prepared to paste it into a poll answer.
 

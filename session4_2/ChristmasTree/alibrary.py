@@ -1,11 +1,21 @@
 import random
-try:
-    from log import FileLog
-    logFile = FileLog()
-except Exception as e:
-    print('a WARNING: Missing Filelog() in log.py')
+import sys
+import traceback
 
-def giftGenerate(count = 1):
+from log import FileLog
+
+logFile = FileLog()
+'''
+PLEASE NOTE:
+------------
+Throughout alibrary.py and blibrary.py we will catch any exceptions
+raised by an incorrect implementation of FileLog.  We will print the
+stacktrace of that exception to help you debug your code. This is not what
+you would do in a real application / logging library!
+'''
+
+
+def giftGenerate(count=1):
     """ Gift Generation.
 
     Input:
@@ -26,14 +36,15 @@ def giftGenerate(count = 1):
     try:
         logFile.info('Generated ' + str(count) + ' gifts from giftGenerate().')
     except:
-        pass
+        traceback.print_exc(file=sys.stdout)
     return ans
 
-def nameGenerate(count = 1):
+
+def nameGenerate(count=1):
     """ Name Generation.
 
     Input:
-        cunt: int. Number of children.
+        count: int. Number of children.
 
     Output:
         List object, containing the names as string.
@@ -54,5 +65,5 @@ def nameGenerate(count = 1):
     try:
         logFile.info('Generated ' + str(count) + ' names from nameGenerate().')
     except:
-        pass
+        traceback.print_exc(file=sys.stdout)
     return ans
