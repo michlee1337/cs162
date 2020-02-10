@@ -47,6 +47,6 @@ class CannonBall(AbstractSimulation):
         print("At time {} the cannonball is at position {}".format(
             self.time, repr(self.position)))
 
-
-cb = CannonBall(20, [50.125, 25.25])
-cb.run()
+if __name__ == '__main__':
+    cb = CannonBall(20, [50.125, 25.25])
+    cb.run()

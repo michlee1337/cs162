@@ -11,38 +11,53 @@ At least three methods are required:
 info(msg), warning(msg), and error(msg).
 '''
 
-import logging
-import os
-import datetime
-import time
-
-
-class Singleton(type):
-    def __init__(self, name, bases, mmbs):
-        super(Singleton, self).__init__(name, bases, mmbs)
-        self._instance = super(Singleton, self).__call__()
-
-    def __call__(self, *args, **kw):
-        return self._instance
-
 class FileLog():
-    def __init__(self, logger = None):
-        if logger == None:
-            logger = logging.getLogger("rando")
-            handler = logging.FileHandler('main.log', mode='w')
-            logger.addHandler(handler)
-        self.logger = logger
+    _instance = None
 
-    def info(self, msg):
-        self.logger.info(msg)
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls)
+            cls._instance.file = "MyCustomLogFile.txt"
+            cls._instance.level = 5
+        return(cls._instance)
 
-    def warning(self, msg):
-        self.logger.warning(msg)
+    def __init__(cls):
+        print("HI WORLD")
 
-    def error(self, msg):
-        self.logger.error(msg)
+    def generic(self, prefix, message, level):
+        if level >= self.level:
+            with open(self.file,"a") as f:
+                f.write(prefix + message + "\n")
+
+    def debug(self,message):
+        self.generic("DEBUG: ", message, 4)
+
+    def info(self,message):
+        self.generic("INFO: ", message, 5)
+
+    def warning(self,message):
+        self.generic("WARNING: ", message, 6)
+
+    def error(self,message):
+        self.generic("ERROR: ", message, 6)
 
 
+'''
+The following function serves as a simple test to check
+whether the id of multiple instances of Filelog remain
+the same.
+'''
+
+
+def file_log_test():
+    log = FileLog()
+    log.info(f'One CS162 Filelog instance found with id {id(log)}')
+    log2 = FileLog()
+    log2.info(f'Another CS162 Filelog instance Found with id {id(log2)}.')
+    if id(log) != id(log2):
+        log.error('The singleton implementation is buggy!')
+    else:
+        log.info('The singleton implementation works!')
 
 
 if __name__ == '__main__':

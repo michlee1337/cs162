@@ -1,0 +1,42 @@
+INFO: Generated 8 gifts from giftGenerate().
+INFO: Christmas _tree created.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree layers generated.
+INFO: Successfully printed the Christmas tree.
+INFO: Generated 8 names from nameGenerate().
+INFO: Successfully gifted 8 present(s) to children.
+INFO: Christmas _tree decorated.
+WARNING: Gift request denied: Christmas tree is empty.
+INFO: Successfully gifted 0 present(s) to children.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree created.
+ERROR: Called Christmas_tree.show() before Christmas_tree.decorate().
+INFO: Generated 8 gifts from giftGenerate().
+INFO: Christmas _tree created.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree layers generated.
+INFO: Successfully printed the Christmas tree.
+INFO: Generated 8 names from nameGenerate().
+INFO: Successfully gifted 8 present(s) to children.
+INFO: Christmas _tree decorated.
+WARNING: Gift request denied: Christmas tree is empty.
+INFO: Successfully gifted 0 present(s) to children.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree created.
+ERROR: Called Christmas_tree.show() before Christmas_tree.decorate().
+INFO: One CS162 Filelog instance found with id 4560527760
+INFO: Another CS162 Filelog instance Found with id 4560527760.
+INFO: The singleton implementation works!
+INFO: Generated 8 gifts from giftGenerate().
+INFO: Christmas _tree created.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree layers generated.
+INFO: Successfully printed the Christmas tree.
+INFO: Generated 8 names from nameGenerate().
+INFO: Successfully gifted 8 present(s) to children.
+INFO: Christmas _tree decorated.
+WARNING: Gift request denied: Christmas tree is empty.
+INFO: Successfully gifted 0 present(s) to children.
+INFO: Christmas _tree decorated.
+INFO: Christmas _tree created.
+ERROR: Called Christmas_tree.show() before Christmas_tree.decorate().
